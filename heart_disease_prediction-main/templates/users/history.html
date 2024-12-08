@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient History</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/patient_history.css' %}">
+</head>
+<body>
+    <a href="{% url 'successfully_logged_in' %}" class="back-btn">Back</a>
+    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    <div class="container">
+        <h2>Patient History</h2>
+
+        <!-- Search and Filter Form -->
+        <form id="searchForm" class="search-form" method="GET" action="{% url 'history' %}">
+            <input type="text" id="search" name="search" placeholder="Search by name" value="{{ search_query }}" oninput="fetchSuggestions()">
+            <input type="text" id="symptoms" name="symptoms" placeholder="Search by symptoms" value="{{ symptoms_query }}">
+            <div id="suggestions" class="suggestions-box"></div> <!-- Suggestions box -->
+            <select name="gender">
+                <option value="">All Genders</option>
+                <option value="Male" {% if gender_filter == "Male" %}selected{% endif %}>Male</option>
+                <option value="Female" {% if gender_filter == "Female" %}selected{% endif %}>Female</option>
+            </select>
+            <button type="submit">Search</button>
+            <input type="button" value="Reset" class="reset-button" id="resetButton"> <!-- Reset button -->
+        </form>
+
+        <!-- Download Button -->
+        <div class="download-button" style="text-align: center;">
+            {% if search_query and search_query|length > 0 %}
+                {% if gender_filter %}
+                    <a href="{% url 'download_patient_records' search_query gender_filter %}" class="btn btn-primary">Download Patient Records</a>
+                {% else %}
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <!-- Patient History Table -->
+        <form method="POST" action="{% url 'delete_patients' %}">
+            {% csrf_token %}
+            <div class="table-wrapper"> <!-- Table wrapper for scrolling -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>Symptoms</th>
+                            <th>Registration Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in patients %}
+                            <tr>
+                                <td><input type="checkbox" name="patient_ids" value="{{ patient.id }}"></td>
+                                <td>{{ patient.name }}</td>
+                                <td>{{ patient.age }}</td>
+                                <td>{{ patient.gender }}</td>
+                                <td>{{ patient.symptoms }}</td>
+                                <td>{{ patient.registration_date }}</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <a href="{% url 'edit_patient' patient.id %}">Edit</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="7" style="text-align: center; color: #888;">No patients found.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'patient_entry' %}">Register New Patient</a>
+                <button type="submit" class="delete-button">Delete Selected Records</button>
+            </div>
+        </form>
+
+    </div>
+
+    <script>
+        // JavaScript for reset functionality
+        document.getElementById('resetButton').addEventListener('click', function() {
+            // Reset the search fields
+            document.getElementById('search').value = '';
+            document.getElementById('symptoms').value = '';
+            document.querySelector('select[name="gender"]').selectedIndex = 0;
+
+            // Update the URL without any query parameters
+            const url = new URL(window.location.href);
+            url.searchParams.delete('search');
+            url.searchParams.delete('symptoms');
+            url.searchParams.delete('gender');
+
+            // Reload the page with the updated URL
+            window.location.href = url.toString();
+        });
+    </script>
+</body>
+</html>

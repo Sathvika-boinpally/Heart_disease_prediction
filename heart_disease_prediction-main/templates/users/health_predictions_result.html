@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Prediction Result</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        /* Global Styling */
+        body {
+            background: linear-gradient(135deg, #2e3a59, #1c2c44); /* Gradient background */
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            height: 100vh; /* Full viewport height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            text-align: center;
+            max-width: 600px;
+            animation: fadeIn 1.2s ease-out; /* Entry animation */
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #2e3a59;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 1.6rem;
+            line-height: 1.6;
+        }
+
+        .text-success {
+            color: #28a745 !important;
+        }
+
+        .text-danger {
+            color: #dc3545 !important;
+        }
+
+        .btn-primary {
+            background-color: #2e3a59;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #1c2c44;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h3 {
+                font-size: 1.4rem;
+            }
+
+            .btn-primary {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Health Prediction Result</h1>
+        <div class="mt-4">
+            {% if prediction %}
+                <h3 class="text-success">The prediction for your health condition is: <strong>{{ prediction }}</strong></h3>
+            {% elif error %}
+                <h3 class="text-danger">Error: {{ error }}</h3>
+            {% else %}
+                <h3>We couldn't determine the result. Please try again.</h3>
+            {% endif %}
+        </div>
+        <a href="{% url 'health_prediction_form' %}" class="btn btn-primary mt-3">Go Back to Form</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
